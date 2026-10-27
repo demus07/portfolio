@@ -1,0 +1,175 @@
+.work {
+  display: grid;
+  gap: clamp(96px, 11vw, 170px);
+}
+
+.workHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
+
+/* the answer engine: words beside the running call */
+.assistant {
+  display: grid;
+  grid-template-columns: 5fr 6fr;
+  gap: clamp(32px, 5vw, 88px);
+  align-items: center;
+}
+.copy {
+  display: grid;
+  gap: 18px;
+  max-width: 44ch;
+}
+.figure {
+  margin: 0;
+}
+
+/* Typestorm: a stage in its own colours */
+.stage {
+  --ts: #16151f;
+  --ts-text: #e3e6f0;
+  --ts-sub: #9a9cab;
+  --ts-main: #8fb3ff;
+  display: grid;
+  gap: clamp(48px, 6vw, 88px);
+  padding: clamp(32px, 6vw, 96px);
+  border-radius: 28px;
+  background: var(--ts);
+  color: var(--ts-text);
+}
+.stageHead {
+  display: grid;
+  grid-template-columns: 5fr 6fr;
+  gap: clamp(28px, 5vw, 88px);
+  align-items: start;
+}
+.stageText {
+  display: grid;
+  gap: 28px;
+  max-width: 50ch;
+  color: var(--ts-sub);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+}
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border-radius: 999px;
+  background: var(--ts-main);
+  color: var(--ts) !important;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.3s var(--ease);
+}
+.live:hover {
+  background: #a9c4ff;
+}
+.live:active {
+  transform: scale(0.97);
+}
+.live span {
+  transition: transform 0.3s var(--ease);
+}
+.live:hover span {
+  transform: translate(2px, -2px);
+}
+.code {
+  color: var(--ts-text) !important;
+  text-decoration: underline;
+  text-decoration-color: rgb(227 230 240 / 0.35);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 0.3s;
+}
+.code:hover {
+  text-decoration-color: var(--ts-text);
+}
+/* the live test sits straight on the stage: no box inside a box */
+.test :global(.typestorm) {
+  background: transparent;
+  padding: 0;
+  min-height: 0;
+  gap: clamp(28px, 4vw, 56px);
+  border-radius: 0;
+}
+.test :global(.typestorm.is-focused) {
+  outline: none;
+}
+.test :global(.ts-words) {
+  max-width: 34ch;
+  font-size: clamp(1.8rem, 1rem + 2.6vw, 3.6rem);
+  line-height: 1.4;
+}
+.stageCap {
+  font-size: 14px;
+  color: var(--ts-sub);
+}
+
+/* the redesign, in a window */
+.redesign {
+  display: grid;
+  gap: clamp(40px, 5vw, 72px);
+}
+.redesignHead {
+  display: grid;
+  grid-template-columns: 5fr 6fr;
+  gap: clamp(28px, 5vw, 88px);
+  align-items: start;
+}
+.redesignText {
+  display: grid;
+  gap: 14px;
+  max-width: 50ch;
+}
+.browser {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1c1d1f;
+}
+.chrome {
+  display: flex;
+  gap: 8px;
+  padding: 14px 18px;
+}
+.chrome i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #3a3b3e;
+}
+/* the window shows the hero of the page, below the strip of client names at its top */
+.viewport {
+  aspect-ratio: 1800 / 940;
+  overflow: hidden;
+  position: relative;
+}
+.shot {
+  position: absolute;
+  inset: auto 0 0 0;
+  transform-origin: 50% 100%;
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 860px) {
+  .workHead,
+  .assistant,
+  .stageHead,
+  .redesignHead {
+    grid-template-columns: 1fr;
+  }
+  .stage {
+    border-radius: 20px;
+  }
+}

@@ -1,0 +1,171 @@
+.section {
+  perspective: 1600px;
+}
+.card {
+  --rx: 0deg;
+  --ry: 0deg;
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+  padding: clamp(32px, 5.4vw, 88px);
+  border-radius: 24px;
+  background: var(--card);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.6s var(--ease), opacity 0.9s var(--ease);
+}
+.face {
+  display: grid;
+  gap: 26px;
+}
+.who {
+  display: grid;
+  gap: 4px;
+}
+.name {
+  font: 500 1.5rem / 1.1 var(--serif);
+  letter-spacing: 0.01em;
+}
+.role {
+  font-size: 15px;
+  color: var(--soft);
+}
+.title {
+  margin: 20px 0 0;
+  font: 400 clamp(2.2rem, 4vw, 3.6rem) / 1 var(--serif);
+  letter-spacing: -0.02em;
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.letter {
+  display: grid;
+  gap: 16px;
+  max-width: 52ch;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.signature {
+  font: italic 400 2.4rem / 1 var(--serif);
+  color: var(--teal);
+}
+/* the foot of the card: a band one tone down, across its full width */
+.facts {
+  grid-column: 1 / -1;
+  margin: 8px calc(-1 * clamp(32px, 5.4vw, 88px)) calc(-1 * clamp(32px, 5.4vw, 88px));
+  padding: clamp(24px, 3vw, 40px) clamp(32px, 5.4vw, 88px);
+  border-radius: 0 0 24px 24px;
+  background: var(--paper-2);
+}
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  padding-top: 10px;
+  font-size: 15px;
+}
+.contact a {
+  text-decoration: none;
+  color: var(--soft) !important;
+  transition: color 0.3s;
+}
+.contact a:hover {
+  color: var(--ink) !important;
+}
+
+/* the loop */
+.ring {
+  margin: 0;
+  justify-self: center;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.ring svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.track {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 14%, transparent);
+  stroke-width: 1.5;
+}
+.orbit {
+  animation: orbit 10s linear infinite;
+}
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.trail {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transform: scaleX(-1);
+}
+.dot {
+  fill: var(--teal);
+}
+.node {
+  fill: var(--card);
+  stroke: color-mix(in srgb, var(--ink) 35%, transparent);
+  stroke-width: 1.5;
+}
+.label {
+  font: 400 15px var(--sans);
+  fill: var(--soft);
+}
+/* each step lights for the two seconds the runner spends reaching the next one */
+.step .node,
+.step .label {
+  animation: lightNode 10s linear infinite;
+  animation-delay: calc(var(--i) * 2s - 10s);
+}
+@keyframes lightNode {
+  0%,
+  16% {
+    fill: var(--teal);
+    stroke: var(--teal);
+  }
+  22%,
+  100% {
+    fill: var(--card);
+    stroke: color-mix(in srgb, var(--ink) 35%, transparent);
+  }
+}
+.step .label {
+  animation-name: lightLabel;
+}
+@keyframes lightLabel {
+  0%,
+  16% {
+    fill: var(--ink);
+  }
+  22%,
+  100% {
+    fill: var(--soft);
+  }
+}
+.centre {
+  font: italic 400 22px var(--serif);
+  fill: var(--ink);
+}
+
+@media (max-width: 860px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+  .ring {
+    max-width: 320px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .step .node,
+  .step .label {
+    animation: none;
+  }
+}

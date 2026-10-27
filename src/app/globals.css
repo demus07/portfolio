@@ -463,6 +463,32 @@ em {
 .title-card a {
   pointer-events: auto;
 }
+/* on wide screens the title moves into the open sky over the sea, clear of the towers and lamps */
+@media (min-width: 900px) {
+  .title-card {
+    justify-items: start;
+    text-align: left;
+    padding: 16svh 5vw 0 52vw;
+  }
+  .title-card .title-name {
+    margin: 14px 0 22px;
+    white-space: nowrap;
+    font-size: clamp(3.4rem, 5.6vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .title-card .title-sub {
+    max-width: 30ch;
+    margin-bottom: 14px;
+    color: var(--scene-ink);
+  }
+  .title-card .title-place {
+    justify-content: start;
+  }
+  .title-card .title-sub em {
+    font-style: normal;
+  }
+}
 .title-kicker {
   font-size: 11px;
   letter-spacing: 0.32em;
@@ -482,6 +508,22 @@ em {
   line-height: 1.3;
   color: var(--scene-soft);
   margin-bottom: 28px;
+}
+.title-place {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  color: var(--scene-ink);
+}
+.title-place svg {
+  width: 13px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
 }
 .scroll-hint {
   position: absolute;
@@ -544,6 +586,19 @@ em {
   stroke: currentColor;
   stroke-width: 1.2;
   stroke-dasharray: 3 4;
+}
+/* on a phone the head sits near the left edge, so the note points from its right instead */
+@media (max-width: 640px) {
+  .note {
+    right: auto;
+    left: 6px;
+    flex-direction: row-reverse;
+    text-align: left;
+  }
+  .note-line {
+    width: 84px;
+    transform: scaleX(-1);
+  }
 }
 
 /* opening entrance, released when the loader lifts */

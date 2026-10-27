@@ -1,0 +1,127 @@
+.roots {
+  display: grid;
+  gap: var(--gap);
+}
+
+/* the kernel line, with its gears turning */
+.fun {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(32px, 5vw, 88px);
+  align-items: center;
+}
+.gears {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  overflow: visible;
+}
+.gear {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  transform: rotate(var(--phase));
+}
+.axle {
+  fill: var(--teal);
+  stroke: none;
+}
+.spin .gear {
+  animation: turn var(--dur) linear infinite var(--dir);
+}
+@keyframes turn {
+  from {
+    transform: rotate(var(--phase));
+  }
+  to {
+    transform: rotate(calc(var(--phase) + 360deg));
+  }
+}
+.funText {
+  display: grid;
+  gap: 28px;
+}
+.funLine {
+  font: 400 clamp(2rem, 3.4vw, 3.4rem) / 1.06 var(--serif);
+  letter-spacing: -0.02em;
+}
+.funLine span {
+  display: block;
+}
+.grub {
+  max-width: 44ch;
+}
+
+.body {
+  display: grid;
+  gap: 56px;
+}
+.head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
+.figure {
+  margin: 0;
+  container-type: inline-size;
+}
+.figure > div:first-child {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.distros {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  font-size: 15.5px;
+}
+.distros li {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2.5px solid var(--teal);
+  background: var(--paper);
+  margin-bottom: 6px;
+}
+.distros li:last-child .pin {
+  background: var(--teal);
+}
+.os {
+  font: 500 1.6rem / 1.1 var(--serif);
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .fun,
+  .head {
+    grid-template-columns: 1fr;
+  }
+  .gears {
+    max-width: 260px;
+  }
+  .distros {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin .gear {
+    animation: none;
+  }
+}

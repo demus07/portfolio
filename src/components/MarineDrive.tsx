@@ -296,6 +296,7 @@ type Scene = {
   screen: Pt[];
   screenSize: number;
   anchor: Pt; // where the caption points, in fractions of the frame
+  anchorRight: number;
   focus: Pt; // where the camera pushes in, in fractions of the frame
 };
 
@@ -1155,6 +1156,8 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
     screen,
     screenSize: s,
     anchor: { x: (head.hx - head.hr * 1.1) / W, y: (head.hy - head.hr * 1.2) / H },
+    // the same point mirrored to the right of the head, for narrow screens where the note sits on that side
+    anchorRight: (head.hx + head.hr * 1.1) / W,
     focus: { x: meX / W, y: (meY - s * 0.3) / H },
   };
 }
@@ -1362,7 +1365,8 @@ export function MarineDrive({
       if (layerRef.current)
         layerRef.current.style.transformOrigin = `${scene.focus.x * 100}% ${scene.focus.y * 100}%`;
       if (captionRef.current) {
-        captionRef.current.style.left = `${scene.anchor.x * 100}%`;
+        const x = window.matchMedia("(max-width: 640px)").matches ? scene.anchorRight : scene.anchor.x;
+        captionRef.current.style.left = `${x * 100}%`;
         captionRef.current.style.top = `${scene.anchor.y * 100}%`;
       }
       paint(performance.now());

@@ -3,8 +3,9 @@ import { Nav } from "@/components/Nav";
 import { ActionBar } from "@/components/ActionBar";
 import { Opening } from "@/components/Opening";
 import { ContourRun } from "@/components/ContourRun";
+import { Night } from "@/components/Night";
 
-// The landing, then the body: one route drawn through a contour map, section by section.
+// The landing, the body (one route drawn through a contour map), and back to the sea wall.
 export default function Home() {
   return (
     <>
@@ -12,6 +13,7 @@ export default function Home() {
       <Nav />
       <Opening />
       <ContourRun />
+      <Night />
       <ActionBar />
     </>
   );

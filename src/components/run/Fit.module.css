@@ -1,0 +1,167 @@
+.inner {
+  display: grid;
+  gap: clamp(48px, 6vw, 88px);
+}
+.head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
+
+/* two services, two fields of colour */
+.services {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.service {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 18px;
+  min-height: clamp(300px, 26vw, 380px);
+  padding: clamp(32px, 4.4vw, 64px);
+  border-radius: 24px;
+  background: var(--stage);
+  color: var(--on-stage);
+  transition: transform 0.6s var(--ease), opacity 0.9s var(--ease);
+}
+.service:last-child {
+  background: #284b63;
+}
+.service:hover {
+  transform: translateY(-6px);
+}
+.name {
+  margin: 0;
+  font: 400 clamp(2.4rem, 4.4vw, 4rem) / 1 var(--serif);
+  letter-spacing: -0.02em;
+}
+.text {
+  font: 400 clamp(1.15rem, 1.5vw, 1.35rem) / 1.4 var(--serif);
+  max-width: 28ch;
+  color: var(--on-stage);
+}
+.parts {
+  align-self: end;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.parts li {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  font-size: 14px;
+}
+
+/* the sneakers band runs edge to edge, set like a title card */
+.band {
+  margin-top: var(--gap);
+  background: var(--stage);
+  color: var(--on-stage);
+  padding: clamp(120px, 15vw, 220px) 0 clamp(96px, 11vw, 160px);
+}
+.bandInner {
+  width: min(var(--wrap), 980px);
+  margin: 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: clamp(56px, 7vw, 104px);
+  text-align: center;
+}
+.story {
+  max-width: 36ch;
+  font: 400 clamp(1.45rem, 2.2vw, 2rem) / 1.45 var(--serif);
+  text-wrap: pretty;
+}
+.sentence {
+  color: var(--on-stage-soft);
+  opacity: 0;
+  filter: blur(5px);
+  transition: opacity 1.4s var(--ease), filter 1.4s var(--ease);
+  transition-delay: calc(var(--i) * 0.9s);
+}
+.sentence:last-child {
+  color: var(--on-stage);
+}
+.seen .sentence {
+  opacity: 1;
+  filter: none;
+}
+.real {
+  font: 400 clamp(3.2rem, 8vw, 7.6rem) / 0.95 var(--serif);
+  letter-spacing: -0.03em;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.4s var(--ease), transform 1.4s var(--ease);
+}
+.seen .real {
+  opacity: 1;
+  transform: none;
+  transition-delay: 3.6s;
+}
+.ask {
+  opacity: 0;
+  transition: opacity 1.2s var(--ease) 4.6s;
+  display: grid;
+  justify-items: center;
+  gap: 28px;
+  color: var(--on-stage-soft);
+}
+.seen .ask {
+  opacity: 1;
+}
+.ask p {
+  max-width: 40ch;
+}
+.btn {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px 26px;
+  border-radius: 999px;
+  background: var(--on-stage);
+  color: var(--stage) !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.3s var(--ease);
+}
+.btn:hover {
+  background: #fff;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn span {
+  transition: transform 0.3s var(--ease);
+}
+.btn:hover span {
+  transform: translateX(3px);
+}
+
+@media (max-width: 760px) {
+  .head,
+  .services {
+    grid-template-columns: 1fr;
+  }
+  .service {
+    min-height: 0;
+  }
+  .bandInner {
+    width: calc(100% - 48px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sentence,
+  .real,
+  .ask {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

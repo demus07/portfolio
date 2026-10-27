@@ -46,7 +46,14 @@ export function Opening() {
             Sumedh Kudav
           </motion.h1>
           <p className="title-sub open-in" style={{ "--d": "2" } as React.CSSProperties}>
-            <em>I build AI products and websites, fast and with taste. Mumbai, working worldwide.</em>
+            <em>I automate your business and make digital experiences, fast and with taste.</em>
+          </p>
+          <p className="title-place open-in" style={{ "--d": "2" } as React.CSSProperties}>
+            <svg viewBox="0 0 16 20" aria-hidden="true">
+              <path d="M8 19s6-6.1 6-11A6 6 0 0 0 2 8c0 4.9 6 11 6 11Z" />
+              <circle cx="8" cy="8" r="2.2" />
+            </svg>
+            Mumbai, working worldwide
           </p>
           <a className="btn btn-scene open-in" href={mailto("Hello Sumedh")} style={{ "--d": "3" } as React.CSSProperties}>
             Write to me <span aria-hidden="true">→</span>

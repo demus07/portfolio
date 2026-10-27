@@ -74,16 +74,7 @@ export function Night() {
             <a href="#top">Back to the bay ↑</a>
           </p>
           <p className="night-credits">
-            Pictures: <a href="https://www.metmuseum.org/art/collection/search/377601">Vinckboons, The Met</a>
-            {" · "}
-            <a href="https://commons.wikimedia.org/wiki/File:Muscle_man,_by_Vesalius._Wellcome_L0001644.jpg">
-              Vesalius, Wellcome Collection, CC BY 4.0
-            </a>
-            {" · "}
-            <a href="https://commons.wikimedia.org/wiki/File:Coastal_Road,_Mumbai,_November_2025_(cropped).jpg">
-              Coastal Road by Qiw007, CC BY 4.0
-            </a>
-            <br />© 2026 Sumedh Kudav
+            © 2026 Sumedh Kudav
           </p>
         </div>
       </div>
