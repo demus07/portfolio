@@ -3,45 +3,27 @@
   gap: var(--gap);
 }
 
-/* the kernel line, with its gears turning */
-.fun {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: clamp(32px, 5vw, 88px);
-  align-items: center;
+/* the kernel line, over the painted night GRUB died */
+.rescue {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
-.gears {
-  display: block;
-  width: 100%;
-  max-width: 440px;
-  height: auto;
-  overflow: visible;
-}
-.gear {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  transform: rotate(var(--phase));
-}
-.axle {
-  fill: var(--teal);
-  stroke: none;
-}
-.spin .gear {
-  animation: turn var(--dur) linear infinite var(--dir);
-}
-@keyframes turn {
-  from {
-    transform: rotate(var(--phase));
-  }
-  to {
-    transform: rotate(calc(var(--phase) + 360deg));
-  }
+.scene {
+  height: 100svh;
+  min-height: 600px;
 }
 .funText {
+  position: absolute;
+  z-index: 1;
+  top: 14svh;
+  left: 8vw;
   display: grid;
-  gap: 28px;
+  gap: 20px;
+  width: min(34ch, 40vw);
+  color: #1c2630;
+}
+:global(:root[data-theme="dark"]) .funText {
+  color: #ecebe8;
 }
 .funLine {
   font: 400 clamp(2rem, 3.4vw, 3.4rem) / 1.06 var(--serif);
@@ -49,28 +31,27 @@
 }
 .funLine span {
   display: block;
+  white-space: nowrap;
 }
 .grub {
-  max-width: 44ch;
+  max-width: 40ch;
+  font-size: 16px;
 }
 
-.body {
+/* the distros, cut into the face of the sea wall */
+.stones {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
   display: grid;
-  gap: 56px;
+  align-content: center;
+  gap: 22px;
+  padding: 0 7vw;
+  color: rgb(40 34 26 / 0.62);
 }
-.head {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: end;
-}
-.figure {
-  margin: 0;
-  container-type: inline-size;
-}
-.figure > div:first-child {
-  border-radius: 18px;
-  overflow: hidden;
+:global(:root[data-theme="dark"]) .stones {
+  color: rgb(214 222 230 / 0.55);
 }
 .distros {
   list-style: none;
@@ -78,50 +59,46 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
-  font-size: 15.5px;
-}
-.distros li {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-}
-.pin {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2.5px solid var(--teal);
-  background: var(--paper);
-  margin-bottom: 6px;
-}
-.distros li:last-child .pin {
-  background: var(--teal);
+  gap: 24px;
 }
 .os {
-  font: 500 1.6rem / 1.1 var(--serif);
+  font: 400 clamp(1.4rem, 2.2vw, 2.1rem) / 1 var(--serif);
+  letter-spacing: 0.02em;
+}
+.osLine {
+  margin-top: 6px !important;
+  font-size: 14px;
 }
 .links {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px 24px;
-  align-items: start;
+  font-size: 14px;
+}
+.links a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 @media (max-width: 760px) {
-  .fun,
-  .head {
-    grid-template-columns: 1fr;
+  .stones {
+    padding: 0 24px;
+    gap: 12px;
   }
-  .gears {
-    max-width: 260px;
+  .funText {
+    top: 9svh;
+    left: 24px;
+    right: 24px;
+    width: auto;
+  }
+  .funLine span {
+    white-space: normal;
   }
   .distros {
     grid-template-columns: 1fr 1fr;
-    gap: 24px 16px;
+    gap: 10px 16px;
+  }
+  .osLine {
+    display: none;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .spin .gear {
-    animation: none;
-  }
-}
+

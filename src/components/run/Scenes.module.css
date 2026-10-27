@@ -1,0 +1,93 @@
+/* the painted scenes the body walks through, and the few words laid over them */
+.scene {
+  height: 100svh;
+  min-height: 620px;
+}
+.full {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+.over {
+  position: absolute;
+  z-index: 2;
+  top: 13svh;
+  left: 7vw;
+  display: grid;
+  gap: 18px;
+  width: min(30ch, 30vw);
+  color: #1c2630;
+}
+:global(:root[data-theme="dark"]) .over {
+  color: #ecebe8;
+}
+.over h2,
+.over h3 {
+  color: inherit;
+}
+.kicker {
+  font: 400 clamp(1.1rem, 1.4vw, 1.35rem) / 1.2 var(--serif);
+  opacity: 0.75;
+}
+.title {
+  margin: 0;
+  font: 400 clamp(2.2rem, 3.6vw, 3.6rem) / 1.02 var(--serif);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.line {
+  font-size: 16.5px;
+  line-height: 1.5;
+}
+.meta {
+  font-size: 14px;
+  opacity: 0.8;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 6px;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: #1c2630;
+  color: #f2efe8 !important;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease);
+}
+:global(:root[data-theme="dark"]) .cta {
+  background: #ecebe8;
+  color: #1c2630 !important;
+}
+.cta:active {
+  transform: scale(0.97);
+}
+.link {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+}
+/* the real thing, shown under the painting on a phone */
+.below {
+  width: var(--wrap);
+  margin: 0 auto;
+  padding: 28px 0 8px;
+}
+@media (max-width: 759px) {
+  .over {
+    top: 9svh;
+    left: 24px;
+    right: 24px;
+    width: auto;
+    gap: 12px;
+  }
+  .below {
+    width: calc(100% - 48px);
+  }
+}

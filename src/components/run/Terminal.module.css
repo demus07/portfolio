@@ -1,0 +1,69 @@
+.term {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  padding: 0.9em 1.1em;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  line-height: 1.55;
+  color: #c9d4de;
+  pointer-events: none;
+}
+.booted {
+  padding: 0;
+  animation: boot 0.8s var(--ease);
+}
+@keyframes boot {
+  from {
+    opacity: 0;
+  }
+}
+.term > p,
+.menu p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.out {
+  color: #8e9aa6;
+}
+.prompt {
+  color: #7fb4b6;
+}
+.caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: #c9d4de;
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* the boot menu, back where it belongs */
+.menu {
+  height: 100%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1em;
+}
+.menuTitle {
+  color: #c9d4de;
+}
+.menuBox {
+  width: 70%;
+  padding: 0.6em 0;
+  border: 1px solid #5d6a76;
+}
+.menuBox p {
+  padding: 0.1em 1em;
+}
+.menuOn {
+  background: #c9d4de;
+  color: #0c1014;
+}

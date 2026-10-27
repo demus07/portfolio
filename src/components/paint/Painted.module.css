@@ -1,0 +1,37 @@
+.painted {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+:global(:root[data-theme="dark"]) .grain {
+  opacity: 0.9;
+}
+/* the same soft vignette as the landing */
+.painted::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgb(30 60 84 / 0.18) 100%);
+}
+:global(:root[data-theme="dark"]) .painted::after {
+  background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgb(4 10 16 / 0.55) 100%);
+}
+.slot {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+}

@@ -1,111 +1,119 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
 import { MeetingReplay } from "../MeetingReplay";
 import { TypeTest } from "../TypeTest";
 import { WORK } from "@/lib/content";
-import { useInView } from "./useInView";
-import { Statement } from "./Intro";
-import g from "../ContourRun.module.css";
+import { Scene, Slot } from "../paint/Scene";
+import { cafeLayout, paintCafe } from "../paint/cafe";
+import { hoardingLayout, paintHoarding, paintShelter, shelterLayout } from "../paint/street";
+import { useNarrow } from "./useNarrow";
+import x from "./Scenes.module.css";
 import s from "./Work.module.css";
 
+// The answer engine, open on a laptop in an Irani café on the sea face.
 function Assistant() {
-  const [ref, seen] = useInView<HTMLElement>(0.25);
+  const narrow = useNarrow();
   const a = WORK.assistant;
   return (
-    <article ref={ref} className={`${s.assistant} ${seen ? "" : g.out}`}>
-      <div className={s.copy}>
-        <h3 className={`${g.h3} ${g.rise}`}>{a.title}</h3>
-        <p className={`${g.meta} ${g.rise}`} style={{ "--i": "1" } as React.CSSProperties}>
-          {a.facts}
-        </p>
-        {a.text.map((t, i) => (
-          <p key={t} className={g.rise} style={{ "--i": String(i + 2) } as React.CSSProperties}>
-            {t}
-          </p>
-        ))}
-      </div>
-      <figure className={`${s.figure} ${g.rise}`} style={{ "--i": "2" } as React.CSSProperties}>
-        <MeetingReplay />
-        <figcaption className={g.caption}>{a.caption}</figcaption>
-      </figure>
+    <article>
+      <Scene
+        className={x.scene}
+        paint={paintCafe}
+        layout={cafeLayout}
+        label="A painted Irani café on Marine Drive: an arched window onto the bay, a laptop on a marble table running the meeting assistant, a cutting chai and bun maska beside it."
+      >
+        {(l) => (
+          <>
+            <div className={x.over}>
+              <h2 className={x.kicker}>{WORK.title}</h2>
+              <h3 className={x.title}>{a.title}</h3>
+              <p className={x.meta}>{a.facts}</p>
+              <p className={x.line}>{a.text[0]}</p>
+            </div>
+            {!l.narrow && (
+              <Slot rect={l.screen} design={680} className={s.replaySlot}>
+                <MeetingReplay />
+              </Slot>
+            )}
+          </>
+        )}
+      </Scene>
+      {narrow && (
+        <div className={x.below}>
+          <MeetingReplay />
+        </div>
+      )}
     </article>
   );
 }
 
-// Typestorm on its own stage, in its own colours, with the real thing one click away.
+// Typestorm on a hoarding across the road, lit from below, and live: click it and type.
 function Typestorm() {
-  const [ref, seen] = useInView<HTMLElement>(0.2);
   const t = WORK.typestorm;
   return (
-    <article ref={ref} className={`${s.stage} ${seen ? "" : g.out}`}>
-      <div className={s.stageHead}>
-        <h3 className={`${g.h3} ${g.rise}`}>{t.title}</h3>
-        <div className={`${s.stageText} ${g.rise}`} style={{ "--i": "1" } as React.CSSProperties}>
-          <p>{t.text}</p>
-          <p className={s.actions}>
-            <a className={s.live} href={t.liveHref} target="_blank" rel="noreferrer">
-              {t.live} <span aria-hidden="true">↗</span>
-            </a>
-            <a className={s.code} href={t.href} target="_blank" rel="noreferrer">
-              {t.link}
-            </a>
-          </p>
-        </div>
-      </div>
-      <div className={`${s.test} ${g.rise}`} style={{ "--i": "2" } as React.CSSProperties}>
-        <TypeTest />
-      </div>
-      <p className={s.stageCap}>{t.caption}</p>
+    <article>
+      <Scene
+        className={x.scene}
+        paint={paintHoarding}
+        layout={hoardingLayout}
+        label="A painted street of Art Deco blocks on Marine Drive, a hoarding on one facade carrying Typestorm, a typing test you can use."
+      >
+        {(l) => (
+          <>
+            <div className={x.over}>
+              <h3 className={x.title}>{t.title}</h3>
+              <p className={x.line}>{t.text}</p>
+              <p className={x.actions}>
+                <a className={x.cta} href={t.liveHref} target="_blank" rel="noreferrer">
+                  {t.live} <span aria-hidden="true">↗</span>
+                </a>
+                <a className={x.link} href={t.href} target="_blank" rel="noreferrer">
+                  {t.link}
+                </a>
+              </p>
+            </div>
+            <Slot rect={l.board} design={900} className={s.test}>
+              <TypeTest />
+            </Slot>
+          </>
+        )}
+      </Scene>
     </article>
   );
 }
 
-// The redesign in a browser window, settling into place as it scrolls up the screen.
+// The redesign, on the backlit panel of a bus shelter on the promenade.
 function Redesign() {
-  const [ref, seen] = useInView<HTMLElement>(0.2);
-  const frame = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: frame, offset: ["start end", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 0.55], [1.12, 1]);
-  const lift = useTransform(scrollYProgress, [0, 0.5], [60, 0]);
   const r = WORK.redesign;
   return (
-    <article ref={ref} className={`${s.redesign} ${seen ? "" : g.out}`}>
-      <div className={s.redesignHead}>
-        <h3 className={`${g.h3} ${g.rise}`}>{r.title}</h3>
-        <div className={`${s.redesignText} ${g.rise}`} style={{ "--i": "1" } as React.CSSProperties}>
-          <p className={g.meta}>{r.facts}</p>
-          <p>{r.text}</p>
-        </div>
-      </div>
-      <motion.div ref={frame} className={s.browser} style={{ y: lift }} data-ui>
-        <div className={s.chrome} aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className={s.viewport}>
-          <motion.div className={s.shot} style={{ scale }}>
-            <Image src={r.image.src} alt={r.image.alt} width={1800} height={1125} sizes="(max-width: 760px) 92vw, 1240px" />
-          </motion.div>
-        </div>
-      </motion.div>
+    <article>
+      <Scene
+        className={x.scene}
+        paint={paintShelter}
+        layout={shelterLayout}
+        label="A painted bus shelter on the Marine Drive promenade, the bay behind it, its backlit panel showing the redesigned studio site."
+      >
+        {(l) => (
+          <>
+            <div className={x.over}>
+              <h3 className={x.title}>{r.title}</h3>
+              <p className={x.meta}>{r.facts}</p>
+              <p className={x.line}>{r.text}</p>
+            </div>
+            <Slot rect={l.panel} design={1200} className={s.panel}>
+              <Image src={r.image.src} alt={r.image.alt} width={1800} height={1125} sizes="(max-width: 760px) 80vw, 46vw" />
+            </Slot>
+          </>
+        )}
+      </Scene>
     </article>
   );
 }
 
 export function Work() {
-  const [ref, seen] = useInView<HTMLHeadingElement>(0.5);
   return (
-    <section className={`${g.section} ${s.work}`} id="work" data-stop>
-      <div className={s.workHead}>
-        <h2 ref={ref} className={`${g.h2} ${g.rise} ${seen ? "" : g.out}`}>
-          {WORK.title}
-        </h2>
-        <Statement />
-      </div>
+    <section className={`${s.work} ${x.full}`} id="work" data-stop>
       <Assistant />
       <Typestorm />
       <Redesign />

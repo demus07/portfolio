@@ -4,47 +4,33 @@ import { useRef } from "react";
 import { EMAIL, GITHUB_URL, LETTER, X_URL } from "@/lib/content";
 import { useInView } from "./useInView";
 import { Facts } from "./Intro";
+import { Scene } from "../paint/Scene";
+import { necklaceLayout, paintNecklace } from "../paint/necklace";
+import x from "./Scenes.module.css";
 import g from "../ContourRun.module.css";
 import s from "./Card.module.css";
 
-const R = 120;
-
-// The loop drawn as a ring: a runner goes round for good, and each step lights as it passes.
-function Ring() {
-  const steps = LETTER.loop;
+// The loop I work in, as lights along the Queen's Necklace: a light runs the curve for good, and
+// each step of the loop is a stop it lights on the way round.
+function Necklace() {
   return (
-    <figure className={s.ring}>
-      <svg viewBox="-200 -200 400 400" role="img" aria-label={`${steps.join(", ")}, and round again.`}>
-        <circle r={R} className={s.track} />
-        <g className={s.orbit}>
-          <path d={`M 0 ${-R} A ${R} ${R} 0 0 1 ${(R * Math.sin(1.1)).toFixed(1)} ${(-R * Math.cos(1.1)).toFixed(1)}`} className={s.trail} />
-          <circle cy={-R} r={7} className={s.dot} />
-        </g>
-        {steps.map((step, i) => {
-          const a = (i / steps.length) * Math.PI * 2;
-          const x = Math.sin(a) * R;
-          const y = -Math.cos(a) * R;
-          const lx = Math.sin(a) * (R + 26);
-          const ly = -Math.cos(a) * (R + 26);
-          const anchor = Math.abs(lx) < 10 ? "middle" : lx > 0 ? "start" : "end";
-          return (
-            <g key={step} className={s.step} style={{ "--i": String(i) } as React.CSSProperties}>
-              <circle cx={x.toFixed(1)} cy={y.toFixed(1)} r={4} className={s.node} />
-              <text x={lx.toFixed(1)} y={ly.toFixed(1)} textAnchor={anchor} dominantBaseline="middle" className={s.label}>
-                {step}
-              </text>
-            </g>
-          );
-        })}
-        <text y={-6} textAnchor="middle" className={s.centre}>
-          ship it,
-        </text>
-        <text y={22} textAnchor="middle" className={s.centre}>
-          then again
-        </text>
-      </svg>
-      <figcaption className={g.caption}>{LETTER.loopCaption}</figcaption>
-    </figure>
+    <Scene
+      className={x.scene}
+      paint={paintNecklace}
+      layout={necklaceLayout}
+      label={`The Queen's Necklace from Malabar Hill, Marine Drive curving round the bay. A light runs along it, through ${LETTER.loop.join(", ")}, and round again.`}
+    >
+      {(l) => (
+        <>
+          {l.steps.map((p, i) => (
+            <span key={LETTER.loop[i]} className={s.stop} style={{ left: p.x, top: p.y }}>
+              {LETTER.loop[i]}
+            </span>
+          ))}
+          <p className={s.loopCaption}>{LETTER.loopCaption}</p>
+        </>
+      )}
+    </Scene>
   );
 }
 
@@ -69,7 +55,8 @@ export function Card() {
   };
 
   return (
-    <section ref={ref} className={`${g.section} ${s.section} ${seen ? "" : g.out}`} id="about" data-stop>
+    <section ref={ref} className={`${s.section} ${x.full} ${seen ? "" : g.out}`} id="about" data-stop>
+      <Necklace />
       <div ref={card} className={`${s.card} ${g.rise}`} onPointerMove={onMove} onPointerLeave={onLeave}>
         <div className={s.face}>
           <div className={s.who}>
@@ -89,7 +76,6 @@ export function Card() {
             <a href={GITHUB_URL}>GitHub</a>
           </p>
         </div>
-        <Ring />
         <div className={s.facts}>
           <Facts />
         </div>

@@ -1,12 +1,32 @@
-.inner {
+.fit {
+  position: relative;
+  min-height: 100svh;
   display: grid;
-  gap: clamp(48px, 6vw, 88px);
+  align-content: space-between;
+  padding: 13svh 0 8svh;
+}
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+.inner {
+  position: relative;
+  z-index: 1;
+  width: var(--wrap);
+  margin: 0 auto;
+  min-height: 79svh;
+  display: grid;
+  align-content: space-between;
+  gap: 48px;
 }
 .head {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: end;
+  gap: 18px;
+  max-width: 30ch;
+  color: #1c2630;
+}
+:global(:root[data-theme="dark"]) .head {
+  color: #ecebe8;
 }
 
 /* two services, two fields of colour */
@@ -58,39 +78,49 @@
   font-size: 14px;
 }
 
-/* the sneakers band runs edge to edge, set like a title card */
+/* the sneakers band runs edge to edge: the painted shoe, pinned while its sole gives, then the line */
 .band {
-  margin-top: var(--gap);
   background: var(--stage);
   color: var(--on-stage);
-  padding: clamp(120px, 15vw, 220px) 0 clamp(96px, 11vw, 160px);
+  padding-bottom: clamp(96px, 11vw, 160px);
+}
+.pin {
+  height: 190vh;
+}
+.scene {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 560px;
+}
+.fill {
+  height: 100%;
+}
+.story {
+  position: absolute;
+  z-index: 1;
+  top: 15svh;
+  left: 8vw;
+  display: grid;
+  width: min(30ch, 34vw);
+}
+.storyLine {
+  grid-area: 1 / 1;
+  font: 400 clamp(1.7rem, 2.6vw, 2.5rem) / 1.15 var(--serif);
+  letter-spacing: -0.01em;
+  color: #1c2630;
+  text-wrap: balance;
+}
+:global(:root[data-theme="dark"]) .storyLine {
+  color: #ecebe8;
 }
 .bandInner {
   width: min(var(--wrap), 980px);
-  margin: 0 auto;
+  margin: clamp(96px, 11vw, 160px) auto 0;
   display: grid;
   justify-items: center;
-  gap: clamp(56px, 7vw, 104px);
+  gap: clamp(48px, 5vw, 72px);
   text-align: center;
-}
-.story {
-  max-width: 36ch;
-  font: 400 clamp(1.45rem, 2.2vw, 2rem) / 1.45 var(--serif);
-  text-wrap: pretty;
-}
-.sentence {
-  color: var(--on-stage-soft);
-  opacity: 0;
-  filter: blur(5px);
-  transition: opacity 1.4s var(--ease), filter 1.4s var(--ease);
-  transition-delay: calc(var(--i) * 0.9s);
-}
-.sentence:last-child {
-  color: var(--on-stage);
-}
-.seen .sentence {
-  opacity: 1;
-  filter: none;
 }
 .real {
   font: 400 clamp(3.2rem, 8vw, 7.6rem) / 0.95 var(--serif);
@@ -102,11 +132,10 @@
 .seen .real {
   opacity: 1;
   transform: none;
-  transition-delay: 3.6s;
 }
 .ask {
   opacity: 0;
-  transition: opacity 1.2s var(--ease) 4.6s;
+  transition: opacity 1.2s var(--ease) 0.6s;
   display: grid;
   justify-items: center;
   gap: 28px;
@@ -154,9 +183,14 @@
   .bandInner {
     width: calc(100% - 48px);
   }
+  .story {
+    top: 12svh;
+    left: 24px;
+    right: 24px;
+    width: auto;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sentence,
   .real,
   .ask {
     opacity: 1;

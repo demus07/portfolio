@@ -5,10 +5,8 @@
   --rx: 0deg;
   --ry: 0deg;
   display: grid;
-  grid-template-columns: 7fr 5fr;
-  gap: clamp(32px, 5vw, 80px);
-  align-items: center;
-  padding: clamp(32px, 5.4vw, 88px);
+  gap: 24px;
+  padding: clamp(28px, 3vw, 44px);
   border-radius: 24px;
   background: var(--card);
   transform: rotateX(var(--rx)) rotateY(var(--ry));
@@ -16,7 +14,7 @@
 }
 .face {
   display: grid;
-  gap: 26px;
+  gap: 18px;
 }
 .who {
   display: grid;
@@ -31,8 +29,8 @@
   color: var(--soft);
 }
 .title {
-  margin: 20px 0 0;
-  font: 400 clamp(2.2rem, 4vw, 3.6rem) / 1 var(--serif);
+  margin: 8px 0 0;
+  font: 400 clamp(1.9rem, 2.6vw, 2.6rem) / 1.02 var(--serif);
   letter-spacing: -0.02em;
   max-width: 13ch;
   text-wrap: balance;
@@ -40,19 +38,17 @@
 .letter {
   display: grid;
   gap: 16px;
-  max-width: 52ch;
-  font-size: 17px;
-  line-height: 1.65;
+  max-width: 34ch;
+  font: 400 clamp(1.1rem, 1.3vw, 1.25rem) / 1.4 var(--serif);
 }
 .signature {
-  font: italic 400 2.4rem / 1 var(--serif);
+  font: italic 400 2rem / 1 var(--serif);
   color: var(--teal);
 }
 /* the foot of the card: a band one tone down, across its full width */
 .facts {
-  grid-column: 1 / -1;
-  margin: 8px calc(-1 * clamp(32px, 5.4vw, 88px)) calc(-1 * clamp(32px, 5.4vw, 88px));
-  padding: clamp(24px, 3vw, 40px) clamp(32px, 5.4vw, 88px);
+  margin: 0 calc(-1 * clamp(28px, 3vw, 44px)) calc(-1 * clamp(28px, 3vw, 44px));
+  padding: 22px clamp(28px, 3vw, 44px);
   border-radius: 0 0 24px 24px;
   background: var(--paper-2);
 }
@@ -72,100 +68,54 @@
   color: var(--ink) !important;
 }
 
-/* the loop */
-.ring {
-  margin: 0;
-  justify-self: center;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
+/* the loop, as stops along the necklace */
+.stop {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -100%) translateY(-22px);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgb(246 243 236 / 0.92);
+  color: #1c2630;
+  font-size: 13.5px;
+  white-space: nowrap;
 }
-.ring svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
+:global(:root[data-theme="dark"]) .stop {
+  background: rgb(14 22 30 / 0.85);
+  color: #ecebe8;
 }
-.track {
-  fill: none;
-  stroke: color-mix(in srgb, var(--ink) 14%, transparent);
-  stroke-width: 1.5;
+.loopCaption {
+  position: absolute;
+  z-index: 2;
+  right: 5vw;
+  bottom: 5svh;
+  font: italic 400 clamp(1.1rem, 1.5vw, 1.4rem) / 1.2 var(--serif);
+  color: #f6f1e6;
 }
-.orbit {
-  animation: orbit 10s linear infinite;
-}
-@keyframes orbit {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.trail {
-  fill: none;
-  stroke: var(--teal);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  transform: scaleX(-1);
-}
-.dot {
-  fill: var(--teal);
-}
-.node {
-  fill: var(--card);
-  stroke: color-mix(in srgb, var(--ink) 35%, transparent);
-  stroke-width: 1.5;
-}
-.label {
-  font: 400 15px var(--sans);
-  fill: var(--soft);
-}
-/* each step lights for the two seconds the runner spends reaching the next one */
-.step .node,
-.step .label {
-  animation: lightNode 10s linear infinite;
-  animation-delay: calc(var(--i) * 2s - 10s);
-}
-@keyframes lightNode {
-  0%,
-  16% {
-    fill: var(--teal);
-    stroke: var(--teal);
-  }
-  22%,
-  100% {
-    fill: var(--card);
-    stroke: color-mix(in srgb, var(--ink) 35%, transparent);
-  }
-}
-.step .label {
-  animation-name: lightLabel;
-}
-@keyframes lightLabel {
-  0%,
-  16% {
-    fill: var(--ink);
-  }
-  22%,
-  100% {
-    fill: var(--soft);
-  }
-}
-.centre {
-  font: italic 400 22px var(--serif);
-  fill: var(--ink);
+:global(:root:not([data-theme="dark"])) .loopCaption {
+  color: #1c2630;
 }
 
-@media (max-width: 860px) {
-  .card {
-    grid-template-columns: 1fr;
+/* on wide screens the card is held up over the left of the view */
+@media (min-width: 760px) {
+  .section {
+    position: relative;
   }
-  .ring {
-    max-width: 320px;
+  .card {
+    position: absolute;
+    z-index: 3;
+    top: 9svh;
+    left: 5vw;
+    width: min(500px, 38vw);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .orbit,
-  .step .node,
-  .step .label {
-    animation: none;
+@media (max-width: 759px) {
+  .card {
+    width: calc(100% - 48px);
+    margin: 24px auto 0;
+  }
+  .stop {
+    font-size: 11px;
+    padding: 4px 8px;
   }
 }

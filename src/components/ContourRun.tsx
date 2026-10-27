@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Work } from "./run/Work";
 import { Card } from "./run/Card";
 import { Roots } from "./run/Roots";
@@ -10,8 +10,8 @@ import { Fit } from "./run/Fit";
 import s from "./ContourRun.module.css";
 
 /*
- * Contour run. The topographic wallpaper from the rice becomes the ground of the whole page, and one
- * route, like a run along the Coastal Road, is drawn through it as you scroll.
+ * The body: a walk along Marine Drive, one painted scene after another. The topographic wallpaper
+ * from the rice stays underneath as the ground, in case anything shows between them.
  */
 
 // One seamless tile of contour lines. Every octave wraps on the tile, so it repeats without a seam.
@@ -78,93 +78,8 @@ function contourTile(size: number, ink: string) {
 
 // The route runs down the left margin like a road along the coast: it never cuts across the
 // reading, it only bends, a little more in the open space between sections.
-function useRoute(root: React.RefObject<HTMLElement | null>) {
-  const [geo, setGeo] = useState<{ w: number; h: number; d: string } | null>(null);
-  const path = useRef<SVGPathElement>(null);
-  const dot = useRef<SVGCircleElement>(null);
-
-  useEffect(() => {
-    const el = root.current;
-    if (!el) return;
-    const build = () => {
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      const narrow = w < 760;
-      const cw = Math.min(1240, w - 2 * Math.min(96, Math.max(20, w * 0.05)));
-      const gutter = (w - cw) / 2;
-      const x = narrow ? 16 : Math.max(20, gutter / 2);
-      const stops = Array.from(el.querySelectorAll<HTMLElement>("[data-stop]"));
-      const abs = (n: Element) => n.getBoundingClientRect();
-      // the open space between sections, where the road may bend further out
-      const gaps = stops.slice(1).map((sec) => {
-        const prev = sec.previousElementSibling ?? sec;
-        return [abs(prev).bottom + window.scrollY - top, abs(sec.firstElementChild ?? sec).top + window.scrollY - top];
-      });
-      const inGap = (y: number) => gaps.some(([a, b]) => y > a && y < b);
-      let d = `M ${x} 0`;
-      const leg = narrow ? 260 : 360;
-      let y = 0;
-      let k = 0;
-      while (y < h) {
-        const yb = Math.min(h, y + leg);
-        const mid = (y + yb) / 2;
-        const amp = (narrow ? 4 : inGap(mid) ? 22 : 9) * (k % 2 ? -1 : 1);
-        d += ` C ${x + amp} ${y + (yb - y) / 3}, ${x + amp} ${y + (2 * (yb - y)) / 3}, ${x} ${yb}`;
-        y = yb;
-        k++;
-      }
-      setGeo({ w, h, d });
-    };
-    build();
-    const ro = new ResizeObserver(build);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [root]);
-
-  useEffect(() => {
-    const p = path.current;
-    const el = root.current;
-    if (!p || !el || !geo) return;
-    const total = p.getTotalLength();
-    p.style.strokeDasharray = `${total}`;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      // find the length along the route whose height matches the reading line
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      const target = window.scrollY + window.innerHeight * 0.62 - top;
-      let lo = 0;
-      let hi = total;
-      for (let k = 0; k < 22; k++) {
-        const mid = (lo + hi) / 2;
-        if (p.getPointAtLength(mid).y < target) lo = mid;
-        else hi = mid;
-      }
-      p.style.strokeDashoffset = `${total - lo}`;
-      const pt = p.getPointAtLength(lo);
-      dot.current?.setAttribute("cx", String(pt.x));
-      dot.current?.setAttribute("cy", String(pt.y));
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [geo, root]);
-
-  return { geo, path, dot };
-}
-
 export function ContourRun() {
   const root = useRef<HTMLElement>(null);
-  const { geo, path, dot } = useRoute(root);
 
   useEffect(() => {
     const el = root.current;
@@ -176,13 +91,6 @@ export function ContourRun() {
 
   return (
     <main ref={root} className={s.root}>
-      {geo && (
-        <svg className={s.route} width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`} aria-hidden="true">
-          <path d={geo.d} className={s.routeGhost} />
-          <path ref={path} d={geo.d} className={s.routeLine} />
-          <circle ref={dot} r={6} className={s.runner} />
-        </svg>
-      )}
       <Kitchen />
       <Work />
       <Card />
