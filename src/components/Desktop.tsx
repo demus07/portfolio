@@ -134,7 +134,8 @@ const Icon = ({ d }: { d: string }) => (
   </svg>
 );
 
-export function Rice() {
+// `fixed` keeps the desktop as it is at every screen size, for when it is scaled into a painted screen
+export function Rice({ fixed = false }: { fixed?: boolean }) {
   const clock = useClock();
   const wall = useRef<HTMLCanvasElement>(null);
 
@@ -153,7 +154,7 @@ export function Rice() {
 
   return (
     <div
-      className="rice"
+      className={fixed ? "rice rice-fixed" : "rice"}
       data-ui
       role="img"
       aria-label="A redraw of Sumedh's Sway desktop: a topographic wallpaper, a bar of rounded modules along the top, a terminal running pfetch on NixOS and Neovim open on its own config, all in Tokyo Night colours."

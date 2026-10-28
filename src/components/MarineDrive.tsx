@@ -45,6 +45,10 @@ const SHORE: Pt[] = [
   { x: 1.1, y: 1.0 },
 ]; // where the tetrapods meet the water
 const ME_V = 0.71; // how far down the wall I sit
+// traffic, in depth: 1 is the near edge of the picture, bigger is further off
+const CAR_NEAR = 0.45; // past the frame's edge, so cars leave and arrive out of sight
+const CAR_RUN = 18;
+const CAR_SPEED = [0.7, 0.55]; // the going lane, then the coming one
 
 const toward = (near: Pt, d: number): Pt => ({
   x: VP.x + (near.x - VP.x) * d,
@@ -226,16 +230,17 @@ const TONES: Record<Variant, Tone> = {
     disc: { x: 0.8, y: 0.15, r: 0.026, color: "#f3efe2" },
     side: 1,
     cloud: {
-      shade: ["rgba(52, 70, 94, 0.9)", "rgba(30, 46, 66, 0.85)"],
-      lit: ["rgba(150, 170, 196, 0.55)", "rgba(110, 126, 156, 0.3)"],
+      shade: ["rgba(36, 56, 80, 0.5)", "rgba(20, 34, 52, 0.32)"],
+      lit: ["rgba(176, 196, 220, 0.3)", "rgba(120, 142, 172, 0.12)"],
       dx: 0.05,
-      dy: -0.3,
+      dy: -0.35,
     },
+    // thin moonlit wisps, not banks
     banks: [
-      { x: 0.62, base: 0.3, w: 0.12, h: 0.05 },
-      { x: 0.93, base: 0.25, w: 0.1, h: 0.04 },
-      { x: 0.25, base: 0.1, w: 0.1, h: 0.03 },
-      { x: 0.7, base: 0.5, w: 0.1, h: 0.03 },
+      { x: 0.6, base: 0.27, w: 0.16, h: 0.03 },
+      { x: 0.95, base: 0.21, w: 0.13, h: 0.026 },
+      { x: 0.25, base: 0.1, w: 0.12, h: 0.022 },
+      { x: 0.8, base: 0.45, w: 0.15, h: 0.02 },
     ],
     sea: ["#2b4a5e", "#142d3d", "#081620"],
     glint: "214, 226, 236",
@@ -279,14 +284,15 @@ type Scene = {
   H: number;
   tone: Tone;
   sky: HTMLCanvasElement;
-  clouds: HTMLCanvasElement;
+  clouds: { img: HTMLCanvasElement; x: number; y: number; v: number }[];
   city: HTMLCanvasElement;
   stars: { x: number; y: number; r: number; p: number }[];
   gulls: { x: number; y: number; s: number; v: number; p: number }[];
   glints: { x: number; y: number; w: number; h: number; p: number }[];
   foam: { x: number; y: number; r: number; p: number }[];
   lamps: { x: number; y: number; r: number; p: number }[];
-  cars: { z: number; lane: number; color: string; speed: number }[];
+  front: HTMLCanvasElement;
+  cars: { z: number; lane: number; color: string }[];
   lanes: Pt[];
   vp: Pt;
   unit: number;
@@ -706,10 +712,17 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
     }
   }
 
-  // ── clouds, on their own sheet so they can drift ──
-  const clouds = canvas(W, H);
-  const cl = clouds.getContext("2d")!;
-  for (const k of tone.banks) cumulus(cl, X(k.x), Y(k.base), k.w * VW, k.h * VH, tone, rand);
+  // ── clouds, each on its own sheet so it can drift across and come round again ──
+  const clouds: Scene["clouds"] = tone.banks.map((k) => {
+    const cw = k.w * VW;
+    const ch = k.h * VH;
+    const r0 = Math.min(cw * 0.38, ch * 0.6 + cw * 0.04);
+    const img = canvas(Math.ceil(cw * 2 + r0 * 3), Math.ceil(ch * 2 + r0 * 2));
+    const base = img.height - r0;
+    cumulus(img.getContext("2d")!, img.width / 2, base, cw, ch, tone, rand);
+    // the bigger the cloud, the nearer it is and the faster it goes by
+    return { img, x: X(k.x) - img.width / 2, y: Y(k.base) - base, v: (0.003 + k.w * 0.02) * VW };
+  });
 
   const gulls: Scene["gulls"] = [];
   if (tone.day) {
@@ -726,7 +739,7 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
 
   // ── the city, the wall and the sea ──
   const city = canvas(W, H);
-  const c = city.getContext("2d")!;
+  let c = city.getContext("2d")!;
 
   // the sea
   const sg = c.createLinearGradient(0, hz, 0, Y(1));
@@ -1016,6 +1029,9 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
     }
     c.restore();
   }
+  // from here on everything stands in front of the road, on its own sheet so the traffic passes behind it
+  const front = canvas(W, H);
+  c = front.getContext("2d")!;
   for (const d of posts) {
     const base = P(toward(WALK_IN, d));
     const hgt = 0.5 * d * VH;
@@ -1130,9 +1146,13 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
     foam.push({ x: X(p.x + (rand() - 0.3) * 0.01), y: Y(p.y), r: (p.y - HZ) * 0.03 * VH + dpr, p: rand() * TAU });
   }
   const palette = tone.day ? ["#f2c230", "#f1f1ee", "#c94a3e", "#f2c230", "#3e6fa8"] : ["#20262c", "#2b3138", "#3a3036"];
+  // each lane keeps one speed and its cars keep their gaps, so nobody drives through anybody
   const cars: Scene["cars"] = [];
-  for (let i = 0; i < 10; i++)
-    cars.push({ z: rand() * 18, lane: i % 2, color: palette[i % palette.length], speed: 0.5 + rand() * 0.4 });
+  for (let i = 0; i < 10; i++) {
+    const lane = i % 2;
+    const slot = Math.floor(i / 2);
+    cars.push({ z: (slot + 0.15 + rand() * 0.5) * (CAR_RUN / 5), lane, color: palette[i % palette.length] });
+  }
 
   return {
     W,
@@ -1141,6 +1161,7 @@ function build(w: number, h: number, dpr: number, variant: Variant): Scene {
     sky,
     clouds,
     city,
+    front,
     stars,
     gulls,
     glints,
@@ -1171,7 +1192,11 @@ function drawSky(ctx: CanvasRenderingContext2D, s: Scene, t: number, dpr: number
     ctx.arc(st.x, st.y, st.r, 0, TAU);
     ctx.fill();
   }
-  ctx.drawImage(s.clouds, Math.sin(t * 0.025) * s.W * 0.012, 0);
+  for (const c of s.clouds) {
+    const span = s.W + c.img.width;
+    const x = ((((c.x + c.img.width + t * c.v) % span) + span) % span) - c.img.width;
+    ctx.drawImage(c.img, x, c.y);
+  }
   ctx.strokeStyle = "rgba(40, 60, 80, 0.7)";
   ctx.lineWidth = 1.2 * dpr;
   ctx.lineCap = "round";
@@ -1213,26 +1238,39 @@ function drawCity(ctx: CanvasRenderingContext2D, s: Scene, t: number, dpr: numbe
     ctx.fill();
   }
 
-  // traffic: one lane coming, one going
+  // traffic: one lane coming, one going. A car is born small at the far end, fading in, and leaves
+  // the frame at the near end well before it comes round again
   ctx.save();
   ctx.clip(s.roadClip);
-  for (const car of s.cars) {
-    const z = 1 + ((car.z + t * car.speed * (car.lane ? -1 : 1) + 1800) % 18);
+  const cars = s.cars.map((car) => {
+    const run = (((car.z + t * CAR_SPEED[car.lane]) % CAR_RUN) + CAR_RUN) % CAR_RUN;
+    return { car, z: CAR_NEAR + (car.lane ? CAR_RUN - run : run) };
+  });
+  cars.sort((a, b) => b.z - a.z);
+  for (const { car, z } of cars) {
     const d = 1 / z;
     const near = s.lanes[car.lane];
     const x = s.vp.x + (near.x - s.vp.x) * d;
     const y = s.vp.y + (near.y - s.vp.y) * d;
     const len = 0.07 * d * s.unit;
     const hgt = 0.022 * d * s.unit;
+    ctx.globalAlpha = Math.min(1, (CAR_NEAR + CAR_RUN - z) / 3);
     ctx.fillStyle = car.color;
-    ctx.fillRect(x - len / 2, y - hgt, len, hgt);
-    ctx.fillRect(x - len * 0.3, y - hgt * 1.6, len * 0.55, hgt * 0.7);
+    ctx.beginPath();
+    ctx.roundRect(x - len / 2, y - hgt, len, hgt, hgt * 0.25);
+    ctx.roundRect(x - len * 0.3, y - hgt * 1.6, len * 0.55, hgt * 0.75, hgt * 0.3);
+    ctx.fill();
+    ctx.fillStyle = tone.night ? "rgba(0, 0, 0, 0.35)" : "rgba(30, 40, 50, 0.35)";
+    ctx.fillRect(x - len * 0.24, y - hgt * 1.45, len * 0.43, hgt * 0.4);
     if (tone.night) {
       ctx.fillStyle = car.lane ? "rgba(255, 70, 60, 0.9)" : "rgba(255, 244, 214, 0.95)";
       ctx.fillRect(x + (car.lane ? len / 2 - 2 * dpr : -len / 2), y - hgt * 0.7, 2 * dpr, 2 * dpr);
     }
   }
+  ctx.globalAlpha = 1;
   ctx.restore();
+  // the walk, the lamps and the people stand in front of the road
+  ctx.drawImage(s.front, 0, 0);
 
   if (tone.night) {
     ctx.globalCompositeOperation = "lighter";
@@ -1342,8 +1380,11 @@ export function MarineDrive({
     if (grainRef.current) grainRef.current.style.backgroundImage = `url(${grain()})`;
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // a phone gets fewer pixels and half the frames, so scrolling past stays smooth
+    const phone = window.matchMedia("(max-width: 759px)").matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 2);
     let scene: Scene | null = null;
+    let last = -1e9;
     let raf = 0;
     let visible = true;
 
@@ -1373,7 +1414,10 @@ export function MarineDrive({
     };
 
     const loop = (now: number) => {
-      if (visible) paint(now);
+      if (visible && (!phone || now - last > 30)) {
+        last = now;
+        paint(now);
+      }
       raf = requestAnimationFrame(loop);
     };
 

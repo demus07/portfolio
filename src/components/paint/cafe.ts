@@ -133,7 +133,7 @@ export const paintCafe: Paint = (c, w, h, { pal, t }) => {
   c.save();
   c.clip(opening);
   c.translate(a.x, 0);
-  paintBay(c, a.w, h, a.y + a.h * 0.62, a.y + a.h, pal, t);
+  paintBay(c, a.w, h, a.y + a.h * 0.62, a.y + a.h, pal, t, 0.8, 0);
   c.restore();
   // its frame and glazing bars
   const bar = Math.max(4, a.w * 0.012);

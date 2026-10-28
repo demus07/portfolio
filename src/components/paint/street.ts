@@ -1,4 +1,4 @@
-import { cloud, deco, glow, lampPost, moon, promenade, rng, sky, stars, TAU } from "./lib";
+import { deco, drift, glow, lampPost, moon, promenade, rng, sky, stars, TAU } from "./lib";
 import { paintBay } from "./sneaker";
 import type { Paint } from "./Painted";
 
@@ -24,7 +24,8 @@ export const paintHoarding: Paint = (c, w, h, { pal, t }) => {
     moon(c, w * 0.12, h * 0.12, Math.min(w, h) * 0.02);
   } else {
     glow(c, w * 0.9, -h * 0.1, w * 0.6, pal.glow, 0.8);
-    cloud(c, w * 0.18, h * 0.16, Math.min(w, h) * 0.06, pal, 3);
+    // over the blocks, clear of the words
+    if (w >= 760) drift(c, w, t, pal, w * 0.42, [{ at: 0.2, y: h * 0.08, s: Math.min(w, h) * 0.06, v: 8, seed: 3 }]);
   }
   // the row of blocks across the road, the middle one carrying the hoarding
   const r = rng(40);

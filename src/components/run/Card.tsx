@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { EMAIL, GITHUB_URL, LETTER, X_URL } from "@/lib/content";
+import { LETTER } from "@/lib/content";
 import { useInView } from "./useInView";
 import { Facts } from "./Intro";
 import { Scene } from "../paint/Scene";
@@ -22,8 +22,9 @@ function Necklace() {
     >
       {(l) => (
         <>
+          {/* kept clear of the left edge, where the near end of the curve leaves the frame on a phone */}
           {l.steps.map((p, i) => (
-            <span key={LETTER.loop[i]} className={s.stop} style={{ left: p.x, top: p.y }}>
+            <span key={LETTER.loop[i]} className={s.stop} style={{ left: Math.max(p.x, 72), top: p.y }}>
               {LETTER.loop[i]}
             </span>
           ))}
@@ -59,10 +60,6 @@ export function Card() {
       <Necklace />
       <div ref={card} className={`${s.card} ${g.rise}`} onPointerMove={onMove} onPointerLeave={onLeave}>
         <div className={s.face}>
-          <div className={s.who}>
-            <p className={s.name}>Sumedh Kudav</p>
-            <p className={s.role}>Software engineer, Sypha AI · Mumbai</p>
-          </div>
           <h2 className={s.title}>{LETTER.title}</h2>
           <div className={s.letter}>
             {LETTER.paras.map((p) => (
@@ -70,11 +67,6 @@ export function Card() {
             ))}
           </div>
           <p className={s.signature}>{LETTER.signature}</p>
-          <p className={s.contact}>
-            <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-            <a href={X_URL}>X</a>
-            <a href={GITHUB_URL}>GitHub</a>
-          </p>
         </div>
         <div className={s.facts}>
           <Facts />

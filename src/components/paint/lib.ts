@@ -102,26 +102,56 @@ export function moon(c: CanvasRenderingContext2D, x: number, y: number, r: numbe
 }
 
 // a cumulus puff: shaded underside first, the lit crowns over it
+// a cloud the way the night ones on the landing are: soft wisps, stretched long and thin, shaded
+// faintly below and lit along the top, with the sky showing through their edges
 export function cloud(c: CanvasRenderingContext2D, x: number, y: number, s: number, pal: Pal, seed: number) {
   const r = rng(seed);
-  const puffs = Array.from({ length: 7 }, (_, i) => {
-    const u = i / 6 - 0.5;
-    return { x: x + u * s * 2.2, y: y - (1 - Math.abs(u) * 1.6) * s * 0.35 - r() * s * 0.15, r: s * (0.32 + (0.5 - Math.abs(u)) * 0.5 + r() * 0.1) };
+  const puffs = Array.from({ length: 11 }, (_, i) => {
+    const u = i / 10 - 0.5;
+    return { x: x + u * s * 3.2 + (r() - 0.5) * s * 0.3, y: y - (1 - Math.abs(u) * 1.7) * s * 0.22 - r() * s * 0.1, r: s * (0.3 + (0.5 - Math.abs(u)) * 0.45 + r() * 0.12) };
   });
-  c.fillStyle = pal.cloud[1];
-  c.beginPath();
+  const [lit, shade] = pal.dark ? ["176, 196, 220", "20, 34, 52"] : ["255, 255, 255", "150, 178, 210"];
   for (const p of puffs) {
-    c.moveTo(p.x + p.r, p.y + s * 0.12);
-    c.arc(p.x, p.y + s * 0.12, p.r, 0, TAU);
+    const g = c.createRadialGradient(p.x, p.y + p.r * 0.25, 0, p.x, p.y + p.r * 0.25, p.r * 1.2);
+    g.addColorStop(0, `rgba(${shade}, ${pal.dark ? 0.4 : 0.32})`);
+    g.addColorStop(1, `rgba(${shade}, 0)`);
+    c.fillStyle = g;
+    c.beginPath();
+    c.ellipse(p.x, p.y + p.r * 0.25, p.r * 1.6, p.r * 1.2, 0, 0, TAU);
+    c.fill();
   }
-  c.fill();
-  c.fillStyle = pal.cloud[0];
-  c.beginPath();
   for (const p of puffs) {
-    c.moveTo(p.x + p.r * 0.92, p.y - s * 0.02);
-    c.arc(p.x, p.y - s * 0.02, p.r * 0.92, 0, TAU);
+    const ly = p.y - p.r * 0.3;
+    const g = c.createRadialGradient(p.x, ly, 0, p.x, ly, p.r);
+    g.addColorStop(0, `rgba(${lit}, ${pal.dark ? 0.3 : 0.85})`);
+    g.addColorStop(0.6, `rgba(${lit}, ${pal.dark ? 0.12 : 0.4})`);
+    g.addColorStop(1, `rgba(${lit}, 0)`);
+    c.fillStyle = g;
+    c.beginPath();
+    c.ellipse(p.x, ly, p.r * 1.35, p.r, 0, 0, TAU);
+    c.fill();
   }
-  c.fill();
+}
+
+// clouds that drift to the right across the sky and come round again. With `from`, they form out of
+// clear sky there, so they never cross the words to its left
+export function drift(
+  c: CanvasRenderingContext2D,
+  w: number,
+  t: number,
+  pal: Pal,
+  from: number,
+  clouds: { at: number; y: number; s: number; v: number; seed: number }[],
+) {
+  for (const k of clouds) {
+    const span = w - from + k.s * 6;
+    const x = from - k.s * 3 + ((((k.at * span + t * k.v) % span) + span) % span);
+    const fade = from > 0 ? Math.min(1, Math.max(0, (x - k.s * 2.4 - from) / (w * 0.12))) : 1;
+    if (fade <= 0) continue;
+    c.globalAlpha = fade;
+    cloud(c, x, k.y, k.s, pal, k.seed);
+  }
+  c.globalAlpha = 1;
 }
 
 // the bay: a gradient out to the horizon, and glints that drift and flicker

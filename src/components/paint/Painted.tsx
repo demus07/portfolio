@@ -8,8 +8,10 @@ import s from "./Painted.module.css";
 
 export type Paint = (c: CanvasRenderingContext2D, w: number, h: number, o: { pal: Pal; t: number; p: number }) => void;
 
-// A canvas that paints a scene to fill its box. It repaints on resize, on a theme change, when its
-// scroll progress moves, and every frame while it is on screen if the scene is alive.
+// A canvas that paints a scene to fill its box. It repaints on resize, on a theme change, in the same
+// frame its scroll progress moves (so it never trails the scroll), and, if the scene is alive, at
+// about 30fps while it is on screen: the drift of clouds and water needs no more, and scrolling keeps
+// the rest of the frame.
 export function Painted({
   paint,
   progress,
@@ -49,30 +51,28 @@ export function Painted({
     let h = 0;
     let dpr = 1;
     let raf = 0;
-    let queued = 0;
     let visible = false;
+    let last = -1e9;
 
     const draw = (now: number) => {
       if (!w || !h) return;
+      last = now;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       paintRef.current(ctx, w, h, { pal, t: still ? 0 : now / 1000, p: progress?.get() ?? 0 });
     };
-    const request = () => {
-      if (queued || raf) return;
-      queued = requestAnimationFrame((now) => {
-        queued = 0;
-        draw(now);
-      });
+    const moved = () => {
+      if (visible) draw(performance.now());
     };
     const loop = (now: number) => {
-      draw(now);
       raf = visible ? requestAnimationFrame(loop) : 0;
+      if (now - last > 30) draw(now);
     };
     const resize = () => {
       const r = cv.getBoundingClientRect();
       w = r.width;
       h = r.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // painted, grained scenes hold up at 1.5x, and it saves nearly half the pixels of 2x
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       cv.width = Math.round(w * dpr);
       cv.height = Math.round(h * dpr);
       sizeRef.current?.(w, h);
@@ -84,13 +84,13 @@ export function Painted({
     resize();
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
+      if (visible) draw(performance.now());
       if (visible && live && !still && !raf) raf = requestAnimationFrame(loop);
     });
     io.observe(cv);
-    const off = progress?.on("change", request);
+    const off = progress?.on("change", moved);
     return () => {
       cancelAnimationFrame(raf);
-      cancelAnimationFrame(queued);
       ro.disconnect();
       io.disconnect();
       off?.();

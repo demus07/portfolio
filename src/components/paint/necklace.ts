@@ -1,4 +1,4 @@
-import { deco, glow, moon, rng, sea, sky, stars, cloud, TAU } from "./lib";
+import { deco, drift, glow, moon, rng, sea, sky, stars, TAU } from "./lib";
 import type { Paint } from "./Painted";
 
 /*
@@ -38,8 +38,10 @@ export const paintNecklace: Paint = (c, w, h, { pal, t }) => {
     moon(c, w * 0.86, h * 0.1, Math.min(w, h) * 0.02);
   } else {
     glow(c, w * 0.7, -h * 0.1, w * 0.6, pal.glow, 0.8);
-    cloud(c, w * 0.62, h * 0.14, Math.min(w, h) * 0.05, pal, 9);
-    cloud(c, w * 0.9, h * 0.25, Math.min(w, h) * 0.035, pal, 2);
+    drift(c, w, t, pal, w < 760 ? 0 : w * 0.46, [
+      { at: 0.35, y: h * 0.14, s: Math.min(w, h) * 0.05, v: 7, seed: 9 },
+      { at: 0.85, y: h * 0.25, s: Math.min(w, h) * 0.035, v: 5, seed: 2 },
+    ]);
   }
   sea(c, w, horizon, h, pal, t, 29);
 

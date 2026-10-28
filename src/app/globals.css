@@ -194,7 +194,7 @@ em {
   color: var(--scene-on-btn);
 }
 
-/* ───────── Loader: the necklace lights up ───────── */
+/* ───────── Loader: the skyline in one line ───────── */
 .loader {
   position: fixed;
   inset: 0;
@@ -222,8 +222,8 @@ em {
 .loader-center {
   display: grid;
   justify-items: center;
-  gap: 18px;
-  width: min(620px, 82vw);
+  gap: clamp(28px, 4vh, 44px);
+  width: min(900px, 86vw);
   transition:
     transform var(--t-slow) var(--ease),
     opacity var(--t) var(--ease);
@@ -232,46 +232,38 @@ em {
   transform: translateY(-12vh);
   opacity: 0;
 }
-.loader-necklace {
+.loader-skyline {
   width: 100%;
   overflow: visible;
 }
-.loader-road {
+.loader-line {
   fill: none;
-  stroke: var(--rule);
-  stroke-width: 1;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
   stroke-dasharray: 1;
+  vector-effect: non-scaling-stroke;
 }
-.loader-lamp-glow {
-  fill: var(--accent);
+.loader-window {
+  fill: #d9963f;
   opacity: 0;
-  transition: opacity var(--t-fast) var(--ease);
+  transition: opacity var(--t) var(--ease);
 }
-.loader-lamp-core {
-  fill: var(--rule);
-  transition: fill var(--t-fast) var(--ease);
+.loader-window.is-on {
+  opacity: 0.9;
 }
-.loader-lamp.is-on .loader-lamp-glow {
-  opacity: 0.55;
-}
-.loader-lamp.is-on .loader-lamp-core {
-  fill: var(--accent);
-}
-:root[data-theme="dark"] .loader-lamp-glow {
+:root[data-theme="dark"] .loader-window {
   fill: var(--lamp);
 }
-:root[data-theme="dark"] .loader-lamp.is-on .loader-lamp-core {
-  fill: #ffe9c4;
-}
 .loader-name {
-  font-size: clamp(12px, 1.2vw, 14px);
-  letter-spacing: 0.6em;
-  margin-right: -0.6em;
+  font: 400 clamp(1.6rem, 2.6vw, 2.4rem) / 1 var(--serif);
+  letter-spacing: -0.01em;
+  white-space: pre;
 }
 .loader-name span {
   display: inline-block;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(10px);
   transition:
     opacity var(--t) var(--ease),
     transform var(--t) var(--ease);
@@ -279,16 +271,6 @@ em {
 .loader-name span.is-in {
   opacity: 1;
   transform: none;
-}
-.loader-meta {
-  position: absolute;
-  left: var(--m);
-  bottom: clamp(24px, 5vh, 48px);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  line-height: 1.7;
 }
 .loader-count {
   position: absolute;
@@ -300,16 +282,6 @@ em {
   line-height: 0.8;
   font-variant-numeric: tabular-nums;
 }
-.loader-bar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: var(--accent);
-  transform-origin: left;
-}
-
 /* ───────── Nav ───────── */
 .nav {
   position: fixed;
@@ -1172,7 +1144,10 @@ figcaption span {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(to bottom, rgb(246 243 233 / 0.8) 0%, rgb(246 243 233 / 0.25) 45%, rgb(246 243 233 / 0.82) 100%);
+  /* by day the scene is busy behind the words, so a soft pool of paper sits under them */
+  background:
+    radial-gradient(ellipse 60% 42% at 50% 50%, rgb(246 243 233 / 0.72), rgb(246 243 233 / 0) 100%),
+    linear-gradient(to bottom, rgb(246 243 233 / 0.8) 0%, rgb(246 243 233 / 0.35) 45%, rgb(246 243 233 / 0.88) 100%);
 }
 :root[data-theme="dark"] .night-shade {
   background: linear-gradient(to bottom, rgb(5 12 20 / 0.65) 0%, rgb(5 12 20 / 0.2) 45%, rgb(5 12 20 / 0.8) 100%);
@@ -1661,7 +1636,7 @@ figcaption span {
   top: 14.4%;
   width: 39.6%;
   height: 42.6%;
-  padding: 3.4% 2.2%;
+  padding: 3.4% 1.8%;
 }
 .rice-vim {
   left: 44.2%;
@@ -1683,7 +1658,7 @@ figcaption span {
 }
 .r-fetch {
   display: flex;
-  gap: 2.2em;
+  gap: 1.6em;
 }
 .r-logo {
   font: inherit;
@@ -1856,7 +1831,7 @@ figcaption span {
   .road-frame {
     aspect-ratio: 4 / 3;
   }
-  .rice {
+  .rice:not(.rice-fixed) {
     aspect-ratio: 4 / 3;
   }
 }
@@ -1864,23 +1839,23 @@ figcaption span {
   .desktop-head {
     grid-template-columns: 1fr;
   }
-  .rice {
+  .rice:not(.rice-fixed) {
     font-size: 2.1cqi;
   }
-  .rice-term {
+  .rice:not(.rice-fixed) .rice-term {
     left: 4%;
     top: 10%;
     width: 92%;
     height: 50%;
   }
-  .rice-vim {
+  .rice:not(.rice-fixed) .rice-vim {
     left: 14%;
     top: 56%;
     width: 82%;
     height: 40%;
   }
-  .rice-bar .r-group:last-child .r-mod:not(:last-child),
-  .rice-bar .r-group:first-child .r-mod:last-child {
+  .rice:not(.rice-fixed) .rice-bar .r-group:last-child .r-mod:not(:last-child),
+  .rice:not(.rice-fixed) .rice-bar .r-group:first-child .r-mod:last-child {
     display: none;
   }
 }

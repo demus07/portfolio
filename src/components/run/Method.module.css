@@ -1,20 +1,13 @@
-.pin {
-  height: 200vh;
-}
-.sticky {
-  position: sticky;
-  top: 0;
+/* no pin: the run plays on its own, so the scene is just one screen */
+.scene {
   height: 100svh;
   min-height: 600px;
-}
-.fill {
-  height: 100%;
 }
 /* each step sits on the walk under its lamp */
 .pass {
   position: absolute;
   z-index: 2;
-  translate: -50% 0;
+  translate: calc(-50% + 1.6vw) 0;
   width: 18vw;
   text-align: center;
   font: 400 clamp(1.05rem, 1.6vw, 1.5rem) / 1.15 var(--serif);
@@ -28,4 +21,18 @@
     width: 22vw;
     font-size: 0.85rem;
   }
+}
+
+/* what he says once the steps are done, over his head */
+.aside {
+  position: absolute;
+  z-index: 2;
+  translate: -50% -100%;
+  max-width: min(26ch, 70vw);
+  text-align: center;
+  font: italic 400 clamp(1.1rem, 1.5vw, 1.4rem) / 1.25 var(--serif);
+  color: #1c2630;
+}
+:global(:root[data-theme="dark"]) .aside {
+  color: #ecebe8;
 }

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { MeetingReplay } from "../MeetingReplay";
-import { TypeTest } from "../TypeTest";
 import { WORK } from "@/lib/content";
 import { Scene, Slot } from "../paint/Scene";
 import { cafeLayout, paintCafe } from "../paint/cafe";
@@ -48,7 +47,7 @@ function Assistant() {
   );
 }
 
-// Typestorm on a hoarding across the road, lit from below, and live: click it and type.
+// Typestorm on a hoarding across the road, lit from below, playing a recording of the real site.
 function Typestorm() {
   const t = WORK.typestorm;
   return (
@@ -57,7 +56,7 @@ function Typestorm() {
         className={x.scene}
         paint={paintHoarding}
         layout={hoardingLayout}
-        label="A painted street of Art Deco blocks on Marine Drive, a hoarding on one facade carrying Typestorm, a typing test you can use."
+        label="A painted street of Art Deco blocks on Marine Drive, a hoarding on one facade carrying a recording of Typestorm, a typing test, being typed on."
       >
         {(l) => (
           <>
@@ -73,9 +72,19 @@ function Typestorm() {
                 </a>
               </p>
             </div>
-            <Slot rect={l.board} design={900} className={s.test}>
-              <TypeTest />
-            </Slot>
+            <a
+              className={s.board}
+              href={t.liveHref}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open Typestorm"
+              style={{ left: l.board.x, top: l.board.y, width: l.board.w, height: l.board.h }}
+            >
+              <video autoPlay muted loop playsInline preload="metadata" poster={t.video.poster} aria-hidden="true">
+                <source src={t.video.webm} type="video/webm" />
+                <source src={t.video.mp4} type="video/mp4" />
+              </video>
+            </a>
           </>
         )}
       </Scene>

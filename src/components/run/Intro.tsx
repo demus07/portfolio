@@ -5,18 +5,6 @@ import { INTRO, LEETCODE_URL } from "@/lib/content";
 import { useInView } from "./useInView";
 import s from "./Intro.module.css";
 
-function useMumbaiTime() {
-  const [t, setT] = useState("");
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" });
-    const tick = () => setT(fmt.format(new Date()).toLowerCase());
-    tick();
-    const id = window.setInterval(tick, 15_000);
-    return () => window.clearInterval(id);
-  }, []);
-  return t;
-}
-
 // Counts up to the real number once, when it comes into view.
 function CountUp({ to, run }: { to: number; run: boolean }) {
   const [n, setN] = useState(to);
@@ -54,7 +42,6 @@ export function Statement({ className }: { className?: string }) {
 // Three plain facts, the kind printed along the foot of a business card.
 export function Facts() {
   const [ref, seen] = useInView<HTMLDListElement>(0.4);
-  const time = useMumbaiTime();
   const { work, place, leetcode } = INTRO.facts;
 
   return (
@@ -64,10 +51,7 @@ export function Facts() {
           <dd>{work.note}</dd>
         </div>
         <div className={s.fact} style={{ "--i": "1" } as React.CSSProperties}>
-          <dt>
-            {place.value}
-            {time && <span className={s.time}>{time}</span>}
-          </dt>
+          <dt>{place.value}</dt>
           <dd>{place.note}</dd>
         </div>
         <div className={s.fact} style={{ "--i": "2" } as React.CSSProperties}>

@@ -3,27 +3,37 @@
 import { useEffect, useState } from "react";
 
 /*
- * The Queen's Necklace lights up lamp by lamp while the counter runs to 100,
- * the name settles under it, and the curtain lifts onto the bay.
+ * The sea face's Art Deco skyline, drawn as one line from left to right while the counter runs to
+ * 100, its windows lighting as the line passes them, the name settling under it; then the curtain
+ * lifts onto the bay.
  */
 
-const LAMPS = 30;
-const P = [
-  { x: 30, y: 150 },
-  { x: 190, y: 40 },
-  { x: 420, y: 52 },
-  { x: 590, y: 128 },
-];
+// the skyline, laid out once: a run of blocks of different heights on a ground line, in a 1000×240 box
+const GROUND = 220;
+const { path: SKYLINE, windows: WINDOWS } = (() => {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  let d = `M 0 ${GROUND}`;
+  const windows: { x: number; y: number }[] = [];
+  let x = 0;
+  while (x < 1000) {
+    const bw = Math.min(1000 - x, 46 + rnd() * 62);
+    const bh = 50 + rnd() * 140;
+    const top = GROUND - bh;
+    // a rounded Deco corner on some, a stepped crown on others
+    if (rnd() > 0.5) d += ` L ${x} ${top + 12} Q ${x} ${top} ${x + 12} ${top}`;
+    else d += ` L ${x} ${top}`;
+    if (bw > 70 && rnd() > 0.4) d += ` L ${x + bw * 0.35} ${top} L ${x + bw * 0.35} ${top - 14} L ${x + bw * 0.65} ${top - 14} L ${x + bw * 0.65} ${top}`;
+    d += ` L ${x + bw} ${top} L ${x + bw} ${GROUND}`;
+    for (let wy = top + 18; wy < GROUND - 14; wy += 22)
+      for (let wx = x + 10; wx < x + bw - 12; wx += 18) if (rnd() > 0.55) windows.push({ x: Math.round(wx), y: Math.round(wy) });
+    x += bw + 6 + rnd() * 10;
+    if (x < 1000) d += ` L ${Math.min(1000, x)} ${GROUND}`;
+  }
+  return { path: d, windows };
+})();
 
-const lamps = Array.from({ length: LAMPS }, (_, i) => {
-  const t = i / (LAMPS - 1);
-  const u = 1 - t;
-  const x = u ** 3 * P[0].x + 3 * u * u * t * P[1].x + 3 * u * t * t * P[2].x + t ** 3 * P[3].x;
-  const y = u ** 3 * P[0].y + 3 * u * u * t * P[1].y + 3 * u * t * t * P[2].y + t ** 3 * P[3].y;
-  return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
-});
-
-const NAME = "SUMEDH KUDAV";
+const NAME = "Sumedh Kudav";
 const DURATION = 2600;
 
 export function Loader() {
@@ -78,49 +88,28 @@ export function Loader() {
   return (
     <div className={`loader${phase === "lift" ? " is-lifting" : ""}`} aria-hidden="true">
       <div className="loader-center">
-        <svg className="loader-necklace" viewBox="0 0 620 190">
-          <defs>
-            <filter id="lamp-glow" x="-200%" y="-200%" width="500%" height="500%">
-              <feGaussianBlur stdDeviation="4" />
-            </filter>
-          </defs>
-          <path
-            d={`M ${P[0].x} ${P[0].y + 6} C ${P[1].x} ${P[1].y + 6}, ${P[2].x} ${P[2].y + 6}, ${P[3].x} ${P[3].y + 6}`}
-            className="loader-road"
-            pathLength={1}
-            style={{ strokeDashoffset: 1 - progress / 100 }}
-          />
-          {lamps.map((l, i) => {
-            const on = progress >= ((i + 1) / LAMPS) * 100;
-            return (
-              <g key={i} className={`loader-lamp${on ? " is-on" : ""}`}>
-                <circle cx={l.x} cy={l.y} r={7} filter="url(#lamp-glow)" className="loader-lamp-glow" />
-                <circle cx={l.x} cy={l.y} r={2.4} className="loader-lamp-core" />
-              </g>
-            );
-          })}
+        <svg className="loader-skyline" viewBox="-4 -40 1008 268">
+          <path d={SKYLINE} pathLength={1} className="loader-line" style={{ strokeDashoffset: 1 - progress / 100 }} />
+          {WINDOWS.map((w, i) => (
+            <rect
+              key={i}
+              x={w.x}
+              y={w.y}
+              width={6}
+              height={8}
+              className={`loader-window${progress >= (w.x / 1000) * 100 + 4 ? " is-on" : ""}`}
+            />
+          ))}
         </svg>
         <p className="loader-name">
           {[...NAME].map((ch, i) => (
-            <span
-              key={i}
-              className={progress >= 20 + (i / NAME.length) * 70 ? "is-in" : ""}
-            >
-              {ch === " " ? " " : ch}
+            <span key={i} className={progress >= 30 + (i / NAME.length) * 60 ? "is-in" : ""}>
+              {ch}
             </span>
           ))}
         </p>
       </div>
-
-      <p className="loader-meta">
-        Software engineer
-        <br />
-        Mumbai, India
-        <br />
-        Portfolio — 2026
-      </p>
       <p className="loader-count">{progress}</p>
-      <span className="loader-bar" style={{ transform: `scaleX(${progress / 100})` }} />
     </div>
   );
 }

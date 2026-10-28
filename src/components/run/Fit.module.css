@@ -87,6 +87,12 @@
 .pin {
   height: 190vh;
 }
+/* a phone flicks through a pin fast, so it gets a shorter one */
+@media (max-width: 759px) {
+  .pin {
+    height: 160vh;
+  }
+}
 .scene {
   position: sticky;
   top: 0;

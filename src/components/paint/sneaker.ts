@@ -1,4 +1,4 @@
-import { cloud, glow, moon, moonPath, rng, sea, sky, stars, type Pal } from "./lib";
+import { drift, glow, moon, moonPath, rng, sea, sky, stars, type Pal } from "./lib";
 import type { Paint } from "./Painted";
 
 /*
@@ -278,8 +278,9 @@ function upper(c: CanvasRenderingContext2D, X: (u: number) => number, Y: (v: num
 // where the shoe stands, shared with the words laid over the scene
 export function sneakerLayout(w: number, h: number) {
   const narrow = w < 760;
-  const L = narrow ? w * 0.9 : Math.min(w * 0.5, h * 0.98);
-  return { L, x0: narrow ? w / 2 - L * 0.48 : w * 0.58 - L * 0.46, y0: narrow ? h * 0.8 : h * 0.86, horizon: narrow ? h * 0.5 : h * 0.44 };
+  // on a phone the whole shoe stays in frame, toe and all, since the toe is where it gives
+  const L = narrow ? w * 0.82 : Math.min(w * 0.5, h * 0.98);
+  return { L, x0: narrow ? w / 2 - L * 0.5 : w * 0.58 - L * 0.46, y0: narrow ? h * 0.76 : h * 0.86, horizon: narrow ? h * 0.52 : h * 0.44 };
 }
 
 export const paintSneaker: Paint = (c, w, h, { pal, t, p }) => {
@@ -320,16 +321,31 @@ export const paintSneaker: Paint = (c, w, h, { pal, t, p }) => {
 };
 
 // sky, the far shore and the bay, by day or by night
-export function paintBay(c: CanvasRenderingContext2D, w: number, h: number, horizon: number, shore: number, pal: Pal, t: number, moonX = 0.8) {
+export function paintBay(
+  c: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  horizon: number,
+  shore: number,
+  pal: Pal,
+  t: number,
+  moonX = 0.8,
+  // where the clouds come in from, as a share of the width: by default to the right of the words
+  cloudsFrom?: number,
+) {
   sky(c, w, 0, horizon, pal.sky);
   if (pal.dark) {
     stars(c, w, horizon * 0.95, 260, 11, t);
-    moon(c, w * moonX, h * 0.14, Math.min(w, h) * 0.022);
+    moon(c, w * moonX, w < 760 ? horizon * 0.7 : h * 0.14, Math.min(w, h) * 0.022);
   } else {
     glow(c, w * 0.08, -h * 0.08, w * 0.7, pal.glow, 0.85);
-    const drift = (t * 4) % (w + 400);
-    cloud(c, ((w * 0.72 + drift) % (w + 400)) - 200, horizon * 0.36, Math.min(w, h) * 0.07, pal, 4);
-    cloud(c, ((w * 0.2 + drift * 0.6) % (w + 400)) - 200, horizon * 0.62, Math.min(w, h) * 0.045, pal, 7);
+    // on a phone the words fill the top of the sky, so the clouds keep low, near the horizon
+    const narrow = w < 760;
+    const s = Math.min(w, h);
+    drift(c, w, t, pal, narrow ? 0 : (cloudsFrom ?? 0.42) * w, [
+      { at: 0.3, y: horizon * (narrow ? 0.72 : 0.36), s: s * 0.07, v: 9, seed: 4 },
+      { at: 0.8, y: horizon * (narrow ? 0.88 : 0.62), s: s * 0.045, v: 6, seed: 7 },
+    ]);
   }
   // the city across the bay, low on the horizon
   const r = rng(21);

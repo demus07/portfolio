@@ -20,7 +20,7 @@ function Rescue() {
   }, []);
   const desktop = view && (
     <div style={{ width: 1240, transform: `scale(${view.k})`, transformOrigin: "0 0" }}>
-      <Rice />
+      <Rice fixed />
     </div>
   );
   return (

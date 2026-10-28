@@ -27,6 +27,13 @@ function useMumbaiTime() {
   return time;
 }
 
+// What the lamps are doing in Mumbai, squared with what the painting shows: the theme paints the
+// night, the clock says whether it is night out there.
+function lampsLine(nightThere: boolean, nightHere: boolean) {
+  if (nightThere) return nightHere ? "The lamps are on." : "Out there, the lamps are already on.";
+  return nightHere ? "You've lit the lamps early." : "The lamps come on at dusk.";
+}
+
 // The page ends where it began: back on the sea wall, by day or by night.
 export function Night() {
   const time = useMumbaiTime();
@@ -41,8 +48,7 @@ export function Night() {
         <p className="night-time" data-reveal>
           {time ? (
             <>
-              It&rsquo;s {time.label} in Mumbai.{" "}
-              {time.dark ? "The lamps are on." : "The lamps come on at dusk."}
+              It&rsquo;s {time.label} in Mumbai. {lampsLine(time.dark, theme === "dark")}
             </>
           ) : (
             "Mumbai runs on IST."

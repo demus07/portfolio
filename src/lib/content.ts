@@ -25,7 +25,7 @@ export const WORK = {
     href: "https://github.com/demus07/typestorm",
     live: "Try it live",
     liveHref: "https://typestorm-six.vercel.app/",
-    caption: "Typestorm, a small working copy. Click and type; tab starts over.",
+    video: { mp4: "/work/typestorm.mp4", webm: "/work/typestorm.webm", poster: "/work/typestorm-poster.jpg" },
   },
   redesign: {
     title: "A redesign, in an afternoon",
@@ -43,7 +43,7 @@ export const LETTER = {
   paras: [
     "I built my first PC for games and found Linux in 2020. Then I quit my analyst job, joined Sypha AI, and in March 2026 went all in.",
   ],
-  signature: "Sumedh",
+  signature: "~ Sumedh Kudav",
   loop: ["Start messy", "Fail fast", "Ship faster", "Learn", "Iterate"],
   loopCaption: "The loop I work in. It has no last step.",
 };
@@ -71,6 +71,7 @@ export const DESKTOP = {
 
 export const METHOD = {
   title: "I build software the way I train",
+  aside: "That’s the whole method. Keep scrolling, I’ll catch up.",
   lede: "Gym, running, code: see the result, plan back from it, do the messy reps, then refine.",
   steps: [{ eng: "Picture the finished thing" }, { eng: "Work backwards" }, { eng: "Start messy" }, { eng: "Then make it elegant" }],
 };

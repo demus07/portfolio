@@ -3,6 +3,9 @@
 }
 .scroll {
   height: 230vh;
+  @media (max-width: 759px) {
+    height: 180vh;
+  }
 }
 .sticky {
   position: sticky;

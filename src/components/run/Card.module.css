@@ -16,20 +16,8 @@
   display: grid;
   gap: 18px;
 }
-.who {
-  display: grid;
-  gap: 4px;
-}
-.name {
-  font: 500 1.5rem / 1.1 var(--serif);
-  letter-spacing: 0.01em;
-}
-.role {
-  font-size: 15px;
-  color: var(--soft);
-}
 .title {
-  margin: 8px 0 0;
+  margin: 0;
   font: 400 clamp(1.9rem, 2.6vw, 2.6rem) / 1.02 var(--serif);
   letter-spacing: -0.02em;
   max-width: 13ch;
@@ -38,11 +26,11 @@
 .letter {
   display: grid;
   gap: 16px;
-  max-width: 34ch;
+  max-width: 40ch;
   font: 400 clamp(1.1rem, 1.3vw, 1.25rem) / 1.4 var(--serif);
 }
 .signature {
-  font: italic 400 2rem / 1 var(--serif);
+  font: italic 400 1.8rem / 1 var(--serif);
   color: var(--teal);
 }
 /* the foot of the card: a band one tone down, across its full width */
@@ -51,21 +39,6 @@
   padding: 22px clamp(28px, 3vw, 44px);
   border-radius: 0 0 24px 24px;
   background: var(--paper-2);
-}
-.contact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 22px;
-  padding-top: 10px;
-  font-size: 15px;
-}
-.contact a {
-  text-decoration: none;
-  color: var(--soft) !important;
-  transition: color 0.3s;
-}
-.contact a:hover {
-  color: var(--ink) !important;
 }
 
 /* the loop, as stops along the necklace */
@@ -106,7 +79,7 @@
     z-index: 3;
     top: 9svh;
     left: 5vw;
-    width: min(500px, 38vw);
+    width: min(640px, 46vw);
   }
 }
 @media (max-width: 759px) {
